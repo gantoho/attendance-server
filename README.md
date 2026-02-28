@@ -6,11 +6,18 @@ cp .env.example .env.production
 ```
 并修改 .env .env.development .env.production 中的数据库连接信息为实际值
 
-Release 版本
+打包 Release 版本
 ```bash
-cargo run --release
+cargo build --release
 ```
-
+打包完注入变量运行
+```bash
+DATABASE_URL='mysql://root:pass@127.0.0.1:3306/attendance' \
+BIND_ADDRESS='0.0.0.0:7982' \
+DEFAULT_ADMIN_USERNAME="admin" \
+DEFAULT_ADMIN_PASSWORD="your_password" \
+./target/release/attendance-server
+```
 Run Release Linux
 /usr/local/bin/start-attendance.sh（权限 700，归属部署用户）
 ```bash
