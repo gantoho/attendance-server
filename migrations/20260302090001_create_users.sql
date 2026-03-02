@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS users (
+    id VARCHAR(64) PRIMARY KEY,
+    username VARCHAR(191) NOT NULL UNIQUE,
+    password VARCHAR(191) NOT NULL,
+    role VARCHAR(16) NOT NULL,
+    admin_id VARCHAR(64) NULL,
+    location_id VARCHAR(64) NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS locations (
+    id VARCHAR(64) PRIMARY KEY,
+    name VARCHAR(191) NOT NULL,
+    latitude DOUBLE NOT NULL,
+    longitude DOUBLE NOT NULL,
+    radius DOUBLE NOT NULL,
+    admin_id VARCHAR(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

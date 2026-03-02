@@ -1,14 +1,7 @@
-mod models;
-mod config;
-mod state;
-mod db;
-mod repositories;
-mod handlers;
-mod utils;
+use attendance_server::state::AppState;
+use attendance_server::{config, db, api};
 
-use axum::{routing::{delete, get, patch, post}, Router};
 use tower_http::cors::{Any, CorsLayer};
-use state::AppState;
 use std::net::SocketAddr;
 
 #[tokio::main]
@@ -19,26 +12,14 @@ async fn main() {
     db::init_schema(&pool).await.expect("init schema");
     db::init_data(&pool, &cfg).await.expect("init data");
 
-    let state = AppState::new(pool);
+    let state = AppState::new(pool, cfg.jwt_secret.clone(), cfg.token_exp_hours);
 
     let cors = CorsLayer::new()
         .allow_origin(Any)
         .allow_methods(Any)
         .allow_headers(Any);
 
-    let app = Router::new()
-        .route("/health", get(handlers::health::health))
-        .route("/debug/dbpath", get(handlers::health::db_info))
-        .route("/debug/stats", get(handlers::health::stats))
-        .route("/login", post(handlers::auth::login))
-        .route("/users", get(handlers::users::get_users).post(handlers::users::create_user))
-        .route("/users/:id", delete(handlers::users::delete_user))
-        .route("/users/:id/location", get(handlers::users::get_user_location).patch(handlers::users::update_user_location))
-        .route("/locations", get(handlers::locations::get_locations).post(handlers::locations::create_location))
-        .route("/locations/:id", patch(handlers::locations::update_location).delete(handlers::locations::delete_location))
-        .route("/records", get(handlers::records::get_records))
-        .route("/records/admin/:admin_id", get(handlers::records::get_records_by_admin))
-        .route("/checkin", post(handlers::records::check_in))
+    let app = api::router::build_router()
         .layer(cors)
         .with_state(state);
 
