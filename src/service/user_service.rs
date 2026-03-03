@@ -5,12 +5,12 @@ use crate::repository::users;
 use crate::security::crypto;
 use crate::error::ApiError;
 
-pub async fn list_users(state: &AppState, admin_id: Option<String>) -> Vec<User> {
-    let mut list = users::get_all(&state.pool).await.unwrap_or_default();
+pub async fn list_users(state: &AppState, admin_id: Option<String>) -> Result<Vec<User>, ApiError> {
+    let mut list = users::get_all(&state.pool).await.map_err(|e| ApiError::Internal(e.to_string()))?;
     if let Some(aid) = admin_id {
         list = list.into_iter().filter(|u| u.admin_id.as_ref() == Some(&aid)).collect();
     }
-    list
+    Ok(list)
 }
 
 pub async fn create_user(state: &AppState, req: CreateUserRequest) -> Result<User, ApiError> {

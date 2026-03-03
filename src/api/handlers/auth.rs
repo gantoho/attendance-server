@@ -5,6 +5,17 @@ use crate::repository::users;
 use crate::security::{crypto, jwt};
 use crate::error::ApiError;
 
+#[utoipa::path(
+    post,
+    path = "/api/v1/login",
+    request_body = LoginRequest,
+    responses(
+        (status = 200, body = LoginResponse),
+        (status = 401, body = crate::error::ErrorBody),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "auth"
+)]
 pub async fn login(
     State(state): State<AppState>,
     Json(req): Json<LoginRequest>,
@@ -20,10 +31,10 @@ pub async fn login(
                 ).ok();
                 Ok(Json(LoginResponse { success: true, user: Some(user), message: None, token }))
             } else {
-                Err(ApiError::Unauthorized)
+                Err(ApiError::Unauthorized("用户名或密码错误".into()))
             }
         }
-        Ok(None) => Err(ApiError::Unauthorized),
+        Ok(None) => Err(ApiError::Unauthorized("用户不存在".into())),
         Err(e) => Err(ApiError::Internal(e.to_string())),
     }
 }

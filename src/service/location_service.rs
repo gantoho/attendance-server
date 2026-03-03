@@ -4,12 +4,12 @@ use crate::dto::UpdateLocationRequest;
 use crate::repository::locations;
 use crate::error::ApiError;
 
-pub async fn list_locations(state: &AppState, admin_id: Option<String>) -> Vec<Location> {
-    let mut locs = locations::get_all(&state.pool).await.unwrap_or_default();
+pub async fn list_locations(state: &AppState, admin_id: Option<String>) -> Result<Vec<Location>, ApiError> {
+    let mut locs = locations::get_all(&state.pool).await.map_err(|e| ApiError::Internal(e.to_string()))?;
     if let Some(aid) = admin_id {
         locs = locs.into_iter().filter(|l| l.admin_id == aid).collect();
     }
-    locs
+    Ok(locs)
 }
 
 pub async fn create_location(state: &AppState, loc: Location) -> Result<Location, ApiError> {

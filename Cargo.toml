@@ -17,6 +17,7 @@ jsonwebtoken = "9"
 argon2 = { version = "0.5", features = ["password-hash"] }
 password-hash = "0.5"
 rand_core = "0.6"
+utoipa = { version = "4", features = ["chrono", "uuid", "axum_extras"] }
 
 [profile.release]
 opt-level = 3

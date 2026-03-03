@@ -10,3 +10,4 @@ pub mod security;
 pub mod utils;
 pub mod state;
 pub mod service;
+pub mod openapi;

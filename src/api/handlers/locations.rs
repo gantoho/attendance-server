@@ -5,15 +5,37 @@ use crate::domain::Location;
 use std::collections::HashMap;
 use crate::error::ApiError;
 use crate::service::location_service;
+use utoipa::ToSchema;
 
+#[utoipa::path(
+    get,
+    path = "/api/v1/locations",
+    responses(
+        (status = 200, body = [Location]),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "locations"
+)]
 pub async fn get_locations(
     State(state): State<AppState>,
     Query(params): Query<HashMap<String, String>>,
-) -> Json<Vec<Location>> {
+) -> Result<Json<Vec<Location>>, ApiError> {
     let admin_id = params.get("adminId").cloned();
-    Json(location_service::list_locations(&state, admin_id).await)
+    let list = location_service::list_locations(&state, admin_id).await?;
+    Ok(Json(list))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/v1/locations",
+    request_body = CreateLocationRequest,
+    responses(
+        (status = 200, body = Location),
+        (status = 401, body = crate::error::ErrorBody),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "locations"
+)]
 pub async fn create_location(
     State(state): State<AppState>,
     Json(req): Json<CreateLocationRequest>,
@@ -23,6 +45,17 @@ pub async fn create_location(
     Ok(Json(loc))
 }
 
+#[utoipa::path(
+    patch,
+    path = "/api/v1/locations/{id}",
+    request_body = UpdateLocationRequest,
+    responses(
+        (status = 200, body = Location),
+        (status = 404, body = crate::error::ErrorBody),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "locations"
+)]
 pub async fn update_location(
     State(state): State<AppState>,
     Path(id): Path<String>,
@@ -32,6 +65,16 @@ pub async fn update_location(
     Ok(Json(loc))
 }
 
+#[utoipa::path(
+    delete,
+    path = "/api/v1/locations/{id}",
+    responses(
+        (status = 204),
+        (status = 404, body = crate::error::ErrorBody),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "locations"
+)]
 pub async fn delete_location(
     State(state): State<AppState>,
     Path(id): Path<String>,

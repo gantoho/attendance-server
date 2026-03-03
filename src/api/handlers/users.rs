@@ -5,15 +5,38 @@ use crate::dto::CreateUserRequest;
 use std::collections::HashMap;
 use crate::error::ApiError;
 use crate::service::user_service;
+use utoipa::ToSchema;
 
+#[utoipa::path(
+    get,
+    path = "/api/v1/users",
+    responses(
+        (status = 200, body = [User]),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "users"
+)]
 pub async fn get_users(
     State(state): State<AppState>,
     Query(params): Query<HashMap<String, String>>,
-) -> Json<Vec<User>> {
+) -> Result<Json<Vec<User>>, ApiError> {
     let admin_id = params.get("adminId").cloned();
-    Json(user_service::list_users(&state, admin_id).await)
+    let list = user_service::list_users(&state, admin_id).await?;
+    Ok(Json(list))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/v1/users",
+    request_body = CreateUserRequest,
+    responses(
+        (status = 200, body = User),
+        (status = 400, body = crate::error::ErrorBody),
+        (status = 401, body = crate::error::ErrorBody),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "users"
+)]
 pub async fn create_user(
     State(state): State<AppState>,
     Json(req): Json<CreateUserRequest>,
@@ -22,6 +45,16 @@ pub async fn create_user(
     Ok(Json(user))
 }
 
+#[utoipa::path(
+    delete,
+    path = "/api/v1/users/{id}",
+    responses(
+        (status = 204),
+        (status = 404, body = crate::error::ErrorBody),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "users"
+)]
 pub async fn delete_user(
     State(state): State<AppState>,
     Path(id): Path<String>,
@@ -31,11 +64,23 @@ pub async fn delete_user(
 }
 
 #[derive(serde::Deserialize)]
+#[derive(ToSchema)]
 pub struct UpdateUserLocationPayload {
     #[serde(rename = "locationId")]
     pub location_id: String,
 }
 
+#[utoipa::path(
+    patch,
+    path = "/api/v1/users/{id}/location",
+    request_body = UpdateUserLocationPayload,
+    responses(
+        (status = 200, body = User),
+        (status = 404, body = crate::error::ErrorBody),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "users"
+)]
 pub async fn update_user_location(
     State(state): State<AppState>,
     Path(id): Path<String>,
@@ -45,6 +90,16 @@ pub async fn update_user_location(
     Ok(Json(user))
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/v1/users/{id}/location",
+    responses(
+        (status = 200, body = Option<crate::domain::Location>),
+        (status = 404, body = crate::error::ErrorBody),
+        (status = 500, body = crate::error::ErrorBody)
+    ),
+    tag = "users"
+)]
 pub async fn get_user_location(
     State(state): State<AppState>,
     Path(id): Path<String>,
