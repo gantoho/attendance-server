@@ -8,6 +8,8 @@ use uuid::Uuid;
 pub struct User {
     pub id: String,
     pub username: String,
+    #[serde(skip_serializing)]
+    #[schema(skip)]
     pub password: String,
     pub role: UserRole,
     pub admin_id: Option<String>,
