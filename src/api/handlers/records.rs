@@ -5,7 +5,6 @@ use crate::repository::{records, users};
 use crate::service::record_service;
 use std::collections::HashMap;
 use crate::error::ApiError;
-use utoipa::ToSchema;
 
 #[utoipa::path(
     get,

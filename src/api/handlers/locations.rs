@@ -5,7 +5,6 @@ use crate::domain::Location;
 use std::collections::HashMap;
 use crate::error::ApiError;
 use crate::service::location_service;
-use utoipa::ToSchema;
 
 #[utoipa::path(
     get,
