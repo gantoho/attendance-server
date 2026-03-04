@@ -71,9 +71,14 @@ pub fn build_router() -> Router<AppState> {
     let openapi = Router::new()
         .route("/openapi.json", get(|| async {
             let spec = crate::openapi::json();
-            Json(serde_json::from_str::<serde_json::Value>(&spec).unwrap()).into_response()
-        }))
-        .layer(from_fn(middleware::auth::require_auth));
+            let val = serde_json::from_str::<serde_json::Value>(&spec).unwrap();
+            let mut resp = Json(val).into_response();
+            resp.headers_mut().insert(
+                axum::http::header::CACHE_CONTROL,
+                axum::http::HeaderValue::from_static("no-store, no-cache, must-revalidate"),
+            );
+            resp
+        }));
 
     let private = Router::new()
         .route("/users", get(get_users).post(create_user))
