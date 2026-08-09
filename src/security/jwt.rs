@@ -6,10 +6,17 @@ use chrono::{Utc, Duration};
 pub struct Claims {
     pub sub: String,
     pub role: String,
+    pub token_type: String,
     pub exp: usize,
 }
 
-pub fn generate_token(user_id: &str, role: &str, secret: &str, hours: i64) -> Result<String, jsonwebtoken::errors::Error> {
+pub fn generate_token(
+    user_id: &str,
+    role: &str,
+    secret: &str,
+    hours: i64,
+    token_type: &str,
+) -> Result<String, jsonwebtoken::errors::Error> {
     let exp = Utc::now()
         .checked_add_signed(Duration::hours(hours))
         .unwrap()
@@ -17,6 +24,7 @@ pub fn generate_token(user_id: &str, role: &str, secret: &str, hours: i64) -> Re
     let claims = Claims {
         sub: user_id.to_string(),
         role: role.to_string(),
+        token_type: token_type.to_string(),
         exp,
     };
     encode(&Header::default(), &claims, &EncodingKey::from_secret(secret.as_bytes()))

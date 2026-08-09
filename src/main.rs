@@ -12,7 +12,7 @@ async fn main() {
     db::init_schema(&pool).await.expect("init schema");
     db::init_data(&pool, &cfg).await.expect("init data");
 
-    let state = AppState::new(pool, cfg.jwt_secret.clone(), cfg.token_exp_hours);
+    let state = AppState::new(pool, cfg.jwt_secret.clone(), cfg.token_exp_hours, cfg.refresh_token_exp_hours);
 
     let cors = CorsLayer::new()
         .allow_origin(Any)

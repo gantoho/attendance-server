@@ -7,6 +7,7 @@ pub struct Config {
     pub default_admin_password: Option<String>,
     pub jwt_secret: String,
     pub token_exp_hours: i64,
+    pub refresh_token_exp_hours: i64,
 }
 
 impl Config {
@@ -18,6 +19,7 @@ impl Config {
         let default_admin_password = env::var("DEFAULT_ADMIN_PASSWORD").ok();
         let jwt_secret = env::var("JWT_SECRET").map_err(|_| "缺少环境变量 JWT_SECRET".to_string())?;
         let token_exp_hours = env::var("TOKEN_EXP_HOURS").ok().and_then(|s| s.parse::<i64>().ok()).unwrap_or(24);
+        let refresh_token_exp_hours = env::var("REFRESH_TOKEN_EXP_HOURS").ok().and_then(|s| s.parse::<i64>().ok()).unwrap_or(168);
         Ok(Self {
             bind_address,
             database_url,
@@ -25,6 +27,7 @@ impl Config {
             default_admin_password,
             jwt_secret,
             token_exp_hours,
+            refresh_token_exp_hours,
         })
     }
 }

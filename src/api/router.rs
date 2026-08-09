@@ -3,7 +3,7 @@ use axum::{
     Router,
 };
 use crate::api::handlers::{
-    auth::login,
+    auth::{login, refresh},
     health::{health, db_info, stats},
     users::{get_users, create_user, delete_user, update_user_location, get_user_location},
     locations::{get_locations, create_location, update_location, delete_location},
@@ -20,6 +20,7 @@ pub fn build_router() -> Router<AppState> {
         .route("/debug/dbpath", get(db_info))
         .route("/debug/stats", get(stats))
         .route("/login", post(login))
+        .route("/refresh", post(refresh))
         .route("/openapi-view", get(|| async {
             let page = r#"<!doctype html>
 <html lang="zh-CN">

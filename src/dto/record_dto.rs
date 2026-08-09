@@ -1,10 +1,11 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-use crate::domain::AttendanceRecord;
+use crate::domain::{AttendanceRecord, RecordType};
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct CheckInRequest {
     pub user_id: String,
+    pub record_type: RecordType,
     pub latitude: f64,
     pub longitude: f64,
 }

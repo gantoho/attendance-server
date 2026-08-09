@@ -5,10 +5,11 @@ pub struct AppState {
     pub pool: MySqlPool,
     pub jwt_secret: String,
     pub token_exp_hours: i64,
+    pub refresh_token_exp_hours: i64,
 }
 
 impl AppState {
-    pub fn new(pool: MySqlPool, jwt_secret: String, token_exp_hours: i64) -> Self {
-        Self { pool, jwt_secret, token_exp_hours }
+    pub fn new(pool: MySqlPool, jwt_secret: String, token_exp_hours: i64, refresh_token_exp_hours: i64) -> Self {
+        Self { pool, jwt_secret, token_exp_hours, refresh_token_exp_hours }
     }
 }

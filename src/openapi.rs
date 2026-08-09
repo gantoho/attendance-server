@@ -4,6 +4,7 @@ use utoipa::OpenApi;
 #[openapi(
     paths(
         crate::api::handlers::auth::login,
+        crate::api::handlers::auth::refresh,
         crate::api::handlers::users::get_users,
         crate::api::handlers::users::create_user,
         crate::api::handlers::users::delete_user,
@@ -26,8 +27,10 @@ use utoipa::OpenApi;
         crate::domain::Location,
         crate::domain::AttendanceRecord,
         crate::domain::AttendanceStatus,
+        crate::domain::RecordType,
         crate::dto::LoginRequest,
         crate::dto::LoginResponse,
+        crate::dto::RefreshRequest,
         crate::dto::CreateUserRequest,
         crate::dto::CreateLocationRequest,
         crate::dto::UpdateLocationRequest,

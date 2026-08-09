@@ -39,6 +39,9 @@ pub async fn require_auth(mut req: Request, next: Next) -> Response {
             match jwt_secret {
                 Some(secret) => match validate_token(token, &secret) {
                     Ok(claims) => {
+                        if claims.token_type != "access" {
+                            return ApiError::Unauthorized("请使用访问令牌".into()).into_response();
+                        }
                         req.extensions_mut().insert::<Claims>(claims);
                         next.run(req).await
                     }
