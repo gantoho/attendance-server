@@ -13,7 +13,7 @@ pub struct Config {
 impl Config {
     pub fn from_env() -> Result<Self, String> {
         let _ = dotenvy::dotenv();
-        let bind_address = env::var("BIND_ADDRESS").unwrap_or_else(|_| "0.0.0.0:7982".to_string());
+        let bind_address = env::var("BIND_ADDRESS").unwrap_or_else(|_| "0.0.0.0:7983".to_string());
         let database_url = env::var("DATABASE_URL").map_err(|_| "缺少环境变量 DATABASE_URL".to_string())?;
         let default_admin_username = env::var("DEFAULT_ADMIN_USERNAME").ok();
         let default_admin_password = env::var("DEFAULT_ADMIN_PASSWORD").ok();
